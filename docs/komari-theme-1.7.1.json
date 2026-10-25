@@ -1,0 +1,248 @@
+{
+  "name": "Mono",
+  "short": "Mono",
+  "description": "Material 3 Expressive 单色主题：纯黑底、填充卡片、零阴影，参考 blog.rainside.top 的版式。",
+  "version": "1.7.1",
+  "author": "rainside",
+  "url": "https://github.com/AlancoSage/komari-theme-mono",
+  "preview": "preview.png",
+  "configuration": {
+    "type": "managed",
+    "icon": "Palette",
+    "data": [
+      {
+        "key": "accent",
+        "type": "select",
+        "name": "强调色",
+        "description": "下拉选择即可。纯黑白跟随深浅主题；任选一个色块会自动配好可读的字色；选「自定义颜色」再用下面那行填 HEX。",
+        "required": false,
+        "default": "mono",
+        "options": "纯黑白（跟随主题）(mono),紫罗兰 (violet),天蓝 (blue),青色 (cyan),薄荷绿 (emerald),柠檬绿 (lime),琥珀黄 (amber),橙色 (orange),玫瑰粉 (rose),品红 (pink),自定义颜色 (custom)"
+      },
+      {
+        "key": "accentColor",
+        "type": "string",
+        "name": "自定义强调色",
+        "description": "十六进制颜色，只有「强调色」选「自定义颜色」时才生效。例如 #7c5cff、#3366ff。",
+        "required": false,
+        "default": "#7c5cff"
+      },
+      {
+        "key": "density",
+        "type": "string",
+        "name": "卡片密度",
+        "description": "comfortable 舒适（默认）/ compact 紧凑（去掉迷你曲线、行距更小）。留空 = comfortable。",
+        "required": false,
+        "default": "comfortable"
+      },
+      {
+        "key": "grain",
+        "type": "switch",
+        "name": "颗粒纹理",
+        "description": "叠一层极淡的噪点，和参考站点一致。",
+        "required": false,
+        "default": true
+      },
+      {
+        "key": "showSidebar",
+        "type": "switch",
+        "name": "显示侧栏",
+        "description": "右侧的概览 / 分组 / 状态小卡片。",
+        "required": false,
+        "default": true
+      },
+      {
+        "key": "showTraffic",
+        "type": "switch",
+        "name": "显示流量配额",
+        "required": false,
+        "default": true
+      },
+      {
+        "key": "showSparkline",
+        "type": "switch",
+        "name": "显示 CPU 迷你曲线",
+        "required": false,
+        "default": true
+      },
+      {
+        "key": "showPing",
+        "type": "switch",
+        "name": "显示延迟",
+        "required": false,
+        "default": true
+      },
+      {
+        "key": "showExpiry",
+        "type": "switch",
+        "name": "显示到期天数",
+        "required": false,
+        "default": true
+      },
+      {
+        "key": "showPrice",
+        "type": "switch",
+        "name": "显示价格",
+        "required": false,
+        "default": false
+      },
+      {
+        "key": "featuredPingTasks",
+        "type": "string",
+        "name": "卡片上显示的延迟任务 ID",
+        "description": "逗号分隔的任务 ID，例如 1,2,3；留空则卡片不显示延迟。",
+        "required": false,
+        "default": ""
+      },
+      {
+        "key": "featuredNodes",
+        "type": "string",
+        "name": "置顶节点",
+        "description": "逗号分隔的节点 UUID 或节点名称，命中的排在最前面，例如 HK-Premium,Shanghai。",
+        "required": false,
+        "default": ""
+      },
+      {
+        "key": "historyHours",
+        "type": "number",
+        "name": "默认历史范围（小时）",
+        "required": false,
+        "default": 4,
+        "min": 1,
+        "max": 168
+      },
+      {
+        "key": "footerHtml",
+        "type": "richtext",
+        "name": "页脚内容",
+        "required": false
+      },
+      {
+        "key": "logoUrl",
+        "type": "string",
+        "name": "站点图标地址",
+        "description": "左上角那块方形图标。填图片 URL（建议正方形、≥72px，PNG/SVG 都行）；留空则用下面那个字母块。",
+        "required": false,
+        "default": ""
+      },
+      {
+        "key": "logoText",
+        "type": "string",
+        "name": "图标文字",
+        "description": "没有图片时显示的字，最多 2 个字符；留空则自动取站点名的第一个字。",
+        "required": false,
+        "default": ""
+      },
+      {
+        "key": "banner",
+        "type": "string",
+        "name": "横幅图片地址",
+        "description": "顶部全宽 banner，留空则用深色渐变。建议 ≥2000px 宽、16:7 左右。",
+        "required": false,
+        "default": ""
+      },
+      {
+        "key": "background",
+        "type": "string",
+        "name": "整页背景图地址",
+        "description": "固定铺满视口的背景图，卡片与文字仍保持可读。留空则不显示。",
+        "required": false,
+        "default": ""
+      },
+      {
+        "key": "backgroundLight",
+        "type": "string",
+        "name": "浅色模式背景图",
+        "description": "只给浅色主题用。留空则沿用上面的通用背景图。",
+        "required": false,
+        "default": ""
+      },
+      {
+        "key": "backgroundDark",
+        "type": "string",
+        "name": "深色模式背景图",
+        "description": "只给深色主题用。留空则沿用上面的通用背景图。",
+        "required": false,
+        "default": ""
+      },
+      {
+        "key": "backgroundVeil",
+        "type": "number",
+        "name": "背景遮罩浓度（%）",
+        "description": "叠加页面底色压暗背景图，0 为原图、95 几乎看不见。",
+        "required": false,
+        "default": 55,
+        "min": 0,
+        "max": 95
+      },
+      {
+        "key": "backgroundBlur",
+        "type": "number",
+        "name": "背景模糊（px）",
+        "description": "0 为不模糊，数值越大越虚。",
+        "required": false,
+        "default": 0,
+        "min": 0,
+        "max": 48
+      },
+      {
+        "key": "backgroundFit",
+        "type": "string",
+        "name": "背景排布",
+        "description": "cover 铺满裁切（默认）/ contain 完整显示 / tile 平铺。留空 = cover。",
+        "required": false,
+        "default": "cover"
+      },
+      {
+        "key": "fontFamily",
+        "type": "string",
+        "name": "字体",
+        "description": "system 系统默认（默认）/ sans 无衬线 / serif 衬线 / mono 等宽 / rounded 圆体 / custom 自定义。预设依赖访客设备已装字体，要强制统一请配合下面的“字体 CSS 地址”。留空 = system。",
+        "required": false,
+        "default": "system"
+      },
+      {
+        "key": "fontStack",
+        "type": "string",
+        "name": "自定义字体栈",
+        "description": "仅当上面选“自定义”时生效，填完整 CSS font-family 值，例如 \"LXGW WenKai\", \"Microsoft YaHei\", sans-serif",
+        "required": false,
+        "default": ""
+      },
+      {
+        "key": "fontSize",
+        "type": "number",
+        "name": "基础字号（px）",
+        "description": "正文基准字号，12–20，默认 15。",
+        "required": false,
+        "default": 15,
+        "min": 12,
+        "max": 20
+      },
+      {
+        "key": "fontUrl",
+        "type": "string",
+        "name": "字体 CSS 地址",
+        "description": "可选。填一个返回 @font-face 的 CSS 地址（Google Fonts、字体服务商，或主题内的 /themes/Mono/dist/fonts.css）。",
+        "required": false,
+        "default": ""
+      },
+      {
+        "key": "tabularNumbers",
+        "type": "switch",
+        "name": "数字等宽",
+        "description": "数字用等宽字形，刷新时不跳位。",
+        "required": false,
+        "default": true
+      },
+      {
+        "key": "showMap",
+        "type": "switch",
+        "name": "站点地图显示世界地图",
+        "description": "在站点地图页顶部显示节点分布地图，按 region 里的国家码 / 国家名 / 城市名定位。",
+        "required": false,
+        "default": true
+      }
+    ]
+  }
+}

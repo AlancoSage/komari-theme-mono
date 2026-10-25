@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.zip
+*.local
+.env
+.env.*
+!.env.example
+.pnpm-store/

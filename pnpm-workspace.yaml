@@ -1,0 +1,6 @@
+onlyBuiltDependencies:
+  - esbuild
+# pnpm 10+ re-runs `install` before every `pnpm exec`; the esbuild build script
+# approval is irrelevant here (vite resolves the packaged binary through the
+# optional platform package), so skip the redundant resolution pass.
+verifyDepsBeforeRun: false

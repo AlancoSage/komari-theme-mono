@@ -1,0 +1,764 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  Palette mirrors blog.rainside.top (Astro + Material 3 Expressive):
+  monochrome tonal surfaces, 16px cards, white primary, zero elevation.
+  The light theme keeps the same tonal steps, inverted.
+*/
+:root {
+  color-scheme: light;
+  --page-bg: #f7f7f7;
+  --surface-lowest: #ffffff;
+  --surface-low: #f2f2f2;
+  --surface: #ececec;
+  --surface-high: #e4e4e4;
+  --surface-highest: #d9d9d9;
+  --card-bg: #ffffff;
+  --on-surface: #1b1b1b;
+  --on-surface-variant: #4a4a4a;
+  --outline: #8a8a8a;
+  --outline-variant: #d4d4d4;
+  --primary: #1b1b1b;
+  --on-primary: #ffffff;
+  --error: #b3261e;
+  --warn: #8a6d00;
+  --radius: 16px;
+  --radius-lg: 28px;
+  --grain: 0.05;
+  --accent: #1b1b1b;
+  --accent-on: #ffffff;
+  --map-sea: #f7f7f7;
+  --map-land: #dedede;
+  --map-coast: #c6c6c6;
+  --hero-bg-color: #ededed;
+  --hero-bg-image: radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #f1f1f1 58%, #e6e6e6 100%);
+  --hero-fg: #161616;
+  --hero-fg-muted: rgba(22, 22, 22, 0.72);
+  --hero-scrim: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.08) 100%);
+  --hero-shadow: none;
+}
+
+.dark {
+  color-scheme: dark;
+  --page-bg: #131313;
+  --surface-lowest: #0e0e0e;
+  --surface-low: #1b1b1b;
+  --surface: #1f1f1f;
+  --surface-high: #2f2f2f;
+  --surface-highest: #383838;
+  --card-bg: #262626;
+  --on-surface: #e2e2e2;
+  --on-surface-variant: #c6c6c6;
+  --outline: #919191;
+  --outline-variant: #474747;
+  --primary: #ffffff;
+  --on-primary: #1b1b1b;
+  --error: #f2b8b5;
+  --warn: #f0c674;
+  --grain: 0.12;
+  --map-sea: #191919;
+  --map-land: #2e2e2e;
+  --map-coast: #454545;
+  --hero-bg-color: #0e0e0e;
+  --hero-bg-image: radial-gradient(120% 90% at 50% 0%, #262626 0%, #101010 62%, #0b0b0b 100%);
+  --hero-fg: #ffffff;
+  --hero-fg-muted: rgba(255, 255, 255, 0.8);
+  --hero-scrim: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(0, 0, 0, 0.22) 38%,
+    rgba(0, 0, 0, 0.72) 100%
+  );
+  --hero-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
+  --accent: #ffffff;
+  --accent-on: #1b1b1b;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--on-surface);
+  font-family: var(
+    --font-body,
+    "Inter",
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    "PingFang SC",
+    "Hiragino Sans GB",
+    "Microsoft YaHei",
+    sans-serif
+  );
+  font-size: var(--font-size, 15px);
+  font-variant-numeric: var(--num-variant, tabular-nums);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Grain overlay, the same trick the reference blog uses (--texture-opacity). */
+.texture {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* -------------------------------------------------------------- background */
+
+.bg-image {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--page-bg);
+  /* Scheme-specific wallpaper, resolved by the .dark class on <html> so React
+     never has to know which theme won. */
+  background-image: var(--bg-light, none);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  will-change: transform;
+}
+
+.dark .bg-image {
+  background-image: var(--bg-dark, var(--bg-light, none));
+}
+
+.bg-image--contain {
+  background-size: contain;
+}
+
+.bg-image--tile {
+  background-size: auto;
+  background-repeat: repeat;
+}
+
+/* Flat page colour on top of the photo: keeps text and cards readable. */
+.bg-veil {
+  position: absolute;
+  inset: 0;
+  background: var(--page-bg);
+}
+
+/* Light themes need a touch more wash before dark type stays legible. */
+.bg-wash {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  opacity: 0;
+}
+
+:root:not(.dark) .bg-wash {
+  opacity: 0.14;
+}
+
+/* ------------------------------------------------------------------- hero */
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: clamp(300px, 40vh, 420px);
+  background-color: var(--hero-bg-color);
+  background-image: var(--hero-bg-image);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+/* A photo banner keeps light text in both themes; the header follows via
+   the `has-banner` class on <html>. */
+.hero--image,
+.has-banner {
+  --hero-fg: #ffffff;
+  --hero-fg-muted: rgba(255, 255, 255, 0.8);
+  --hero-scrim: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(0, 0, 0, 0.22) 38%,
+    rgba(0, 0, 0, 0.72) 100%
+  );
+  --hero-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
+}
+
+.hero--image {
+  min-height: clamp(420px, 62vh, 700px);
+}
+
+/* A page background already fills the viewport, so the hero lets it through. */
+.hero--plain {
+  background-image: none;
+  background-color: transparent;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--hero-scrim);
+}
+
+.hero-title {
+  color: var(--hero-fg);
+  font-size: clamp(38px, 7.2vw, 82px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-shadow: var(--hero-shadow);
+}
+
+.wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 64px;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ tokens */
+
+.t-primary {
+  color: var(--on-surface);
+}
+
+.t-secondary {
+  color: var(--on-surface-variant);
+}
+
+.t-muted {
+  color: var(--outline);
+}
+
+.t-accent {
+  color: var(--accent);
+}
+
+.t-error {
+  color: var(--error);
+}
+
+.t-warn {
+  color: var(--warn);
+}
+
+/* Digit spacing is inherited from `body`, so the admin switch controls it. */
+.num {
+  font-feature-settings: inherit;
+}
+
+.label {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--outline);
+}
+
+.divider {
+  height: 1px;
+  background: var(--outline-variant);
+  opacity: 0.6;
+}
+
+/* ------------------------------------------------------------------- cards */
+
+.m3-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 0;
+  box-shadow: none;
+}
+
+.m3-card--high {
+  background: var(--surface-high);
+}
+
+.m3-card--low {
+  background: var(--surface-low);
+}
+
+.m3-interactive {
+  cursor: pointer;
+  transition:
+    background-color 180ms cubic-bezier(0.2, 0, 0, 1),
+    transform 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.m3-interactive:hover {
+  background: var(--surface-high);
+}
+
+.m3-interactive:active {
+  transform: scale(0.995);
+}
+
+.m3-interactive:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ----------------------------------------------------------------- buttons */
+
+.m3-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.m3-icon-btn:hover {
+  background: var(--surface-high);
+  color: var(--on-surface);
+}
+
+.m3-icon-btn--active {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.m3-icon-btn--active:hover {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+/* Admin sits at the end of the cluster, split off with a hairline. */
+.m3-icon-btn--admin {
+  position: relative;
+  margin-left: 6px;
+}
+
+.m3-icon-btn--admin::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 50%;
+  width: 1px;
+  height: 18px;
+  transform: translateY(-50%);
+  background: currentColor;
+  opacity: 0.22;
+}
+
+.m3-navlink {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+  text-decoration: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.m3-navlink:hover {
+  background: var(--surface-high);
+  color: var(--on-surface);
+}
+
+.m3-navlink--active {
+  color: var(--on-surface);
+  background: var(--surface-high);
+}
+
+.m3-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 0;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--primary);
+  color: var(--on-primary);
+  cursor: pointer;
+  transition: filter 160ms ease, opacity 160ms ease;
+}
+
+.m3-btn:hover {
+  filter: brightness(1.08);
+}
+
+.m3-btn--text {
+  background: transparent;
+  color: var(--on-surface-variant);
+}
+
+.m3-btn--text:hover {
+  background: var(--surface-high);
+  filter: none;
+}
+
+.m3-btn--outlined {
+  background: transparent;
+  color: var(--on-surface);
+  box-shadow: inset 0 0 0 1px var(--outline-variant);
+}
+
+/* ------------------------------------------------------------------- chips */
+
+.m3-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--on-surface-variant);
+  background: var(--surface-high);
+  white-space: nowrap;
+}
+
+.m3-chip--flat {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--outline-variant);
+}
+
+.m3-chip--accent {
+  background: var(--accent);
+  color: var(--accent-on);
+}
+
+/* ------------------------------------------------------------------ meters */
+
+.track {
+  height: 4px;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--surface-highest);
+  overflow: hidden;
+}
+
+.track > i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 500ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.track--error > i {
+  background: var(--error);
+}
+
+/* ------------------------------------------------------------------- input */
+
+.field {
+  width: 100%;
+  height: 40px;
+  border-radius: 999px;
+  border: 0;
+  background: var(--surface-high);
+  padding: 0 16px 0 38px;
+  font-size: 14px;
+  color: var(--on-surface);
+  outline: none;
+  transition: box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.field::placeholder {
+  color: var(--outline);
+}
+
+.field:focus {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+/* ------------------------------------------------------------------ filter */
+
+.tab {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.tab:hover {
+  background: var(--surface-high);
+  color: var(--on-surface);
+}
+
+.tab--active {
+  background: var(--accent);
+  color: var(--accent-on);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ drawer */
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  animation: fade 220ms ease;
+}
+
+.sheet {
+  background: var(--surface);
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  animation: slide 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(32px);
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------- utilities */
+
+.skeleton {
+  background: var(--surface-high);
+  border-radius: 12px;
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-highest);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- world map ---------- */
+
+.map-pin {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  cursor: pointer;
+}
+
+.map-pin:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.map-pin__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow: 0 0 0 2px var(--page-bg);
+}
+
+.map-pin[data-online="false"] .map-pin__dot {
+  background: var(--outline-variant);
+}
+
+.map-pin__ring {
+  position: absolute;
+  inset: 4px;
+  border-radius: 999px;
+  border: 1px solid var(--primary);
+  opacity: 0;
+}
+
+.map-pin[data-online="true"] .map-pin__ring {
+  animation: map-pulse 2.8s ease-out infinite;
+}
+
+@keyframes map-pulse {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.4);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-pin[data-online="true"] .map-pin__ring {
+    animation: none;
+    opacity: 0.25;
+  }
+}
+
+.map-pin__count {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.map-tip {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: 1px;
+  min-width: 104px;
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-highest);
+  transform: translate(-50%, calc(-100% - 15px));
+}
+
+.map-tip[data-flip="true"] {
+  transform: translate(-50%, 15px);
+}
+
+.map-tip__row {
+  padding: 4px 7px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--on-surface);
+  font-family: inherit;
+  font-size: 11px;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.map-tip__row:hover {
+  background: var(--surface-high);
+}
+
+.map-tip__more {
+  padding: 0 7px 2px;
+  color: var(--on-surface-variant);
+  font-size: 10px;
+}
+
+
+/* ------------------------------------------------------------------ palette */
+
+.palette-panel {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 70;
+  width: 300px;
+  max-width: calc(100vw - 24px);
+  border-radius: 18px;
+  padding: 14px;
+  background: var(--surface-low);
+  border: 1px solid var(--outline-variant);
+  box-shadow: 0 20px 50px rgb(0 0 0 / 28%);
+}
+
+.palette-swatch {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 30px;
+  border-radius: 9px;
+  border: 1px solid color-mix(in oklab, var(--outline-variant) 70%, transparent);
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.palette-swatch:hover {
+  transform: translateY(-1px);
+}
+
+.palette-swatch[data-active] {
+  box-shadow: 0 0 0 2px var(--surface-low), 0 0 0 4px var(--on-surface);
+}
+
+@media (max-width: 640px) {
+  .palette-panel {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+  }
+}

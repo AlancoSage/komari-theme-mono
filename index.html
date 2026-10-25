@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!--
+      Processed by the Komari server with byte-level replacement. Keep this file
+      pure ASCII, keep the sentinel lines byte-for-byte identical, and never
+      write a literal closing head/body tag inside a comment.
+    -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Komari Monitor</title>
+    <meta name="description" content="A simple server monitor tool." />
+    <script>
+      // Resolve appearance before first paint; `appearance` is shared with the
+      // default theme so a visitor's choice survives a theme switch.
+      ;(function () {
+        try {
+          var pref = localStorage.getItem("appearance");
+          if (pref !== "light" && pref !== "dark" && pref !== "system") pref = "system";
+          var dark =
+            pref === "dark" ||
+            (pref === "system" &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.classList.toggle("dark", dark);
+        } catch (e) {
+          /* storage blocked: fall through to light */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
