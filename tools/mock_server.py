@@ -15,7 +15,6 @@ import asyncio
 import json
 import math
 import os
-import pathlib
 import random
 import time
 from datetime import datetime, timedelta, timezone
@@ -311,15 +310,6 @@ async def admin_theme_settings(request: web.Request) -> web.Response:
     return web.json_response({"status": "success", "message": "", "data": None})
 
 
-async def plugin_file(request: web.Request) -> web.Response:
-    """Serve the companion plugin page so it can be exercised offline."""
-    root = pathlib.Path(r"D:\dsh\komari-plugin-mono-palette")
-    target = (root / request.match_info["name"]).resolve()
-    if not target.is_file() or root not in target.parents:
-        raise web.HTTPNotFound()
-    return web.FileResponse(target)
-
-
 async def test_bg(request: web.Request) -> web.Response:
     """Stand-in wallpaper so the background setting can be exercised offline."""
     path = ROOT / "docs" / "test-bg.jpg"
@@ -383,7 +373,6 @@ def main() -> None:
     app.router.add_get(f"/themes/{SHORT}/dist/{{path:.*}}", static_file)
     app.router.add_get("/api/admin/theme/list", admin_theme_list)
     app.router.add_post("/api/admin/theme/settings", admin_theme_settings)
-    app.router.add_get("/api/admin/plugin/mono-palette/{name}", plugin_file)
     app.router.add_get("/bg.jpg", test_bg)
     app.router.add_get("/bg-light.jpg", test_bg_light)
     app.router.add_get("/", index)
