@@ -287,14 +287,47 @@ https://你的域名/themes/Mono/komari-theme.json
 
 看 `"version"` 那一行：
 
-- 是你刚装的版本 → 清单已更新，问题不在主题，去查别的主题
+- 是当前版本（1.7.1）→ 清单已更新，问题不在主题
 - 还是 `1.4.2` 这种旧号 → 文件没被替换，按下面走
 
-1. 后台 → 主题 → **删除** Mono（不是禁用）
-2. 重新上传 zip → 启用
-3. 重启 Komari（`systemctl restart komari` / `docker restart komari`）
-4. 后台页面 Ctrl+F5
+**最省事的修法：直接拿文件覆盖，不用进后台、不用重启。** `ListThemes` 每次请求都读
+`./data/theme/<short>/komari-theme.json`，所以文件一换，后台页面立刻恢复：
 
-还不行就手工覆盖：把 zip 里的 `komari-theme.json` 放到 `data/theme/Mono/komari-theme.json`，
-再重启。这个页面是按主题逐个渲染表单的，**任何一个**主题的配置畸形都会拖垮整页，排查时可以先
-只留一个主题。
+```bash
+# 裸机 / 宝塔
+cd /opt/komari                              # 你的 Komari 工作目录
+curl -LO https://github.com/AlancoSage/komari-theme-mono/releases/latest/download/komari-theme-mono-1.7.1.zip
+unzip -o komari-theme-mono-1.7.1.zip -d data/theme/Mono
+```
+
+```bash
+# Docker
+docker cp komari-theme-mono-1.7.1.zip komari:/app/
+docker exec -it komari sh -c 'cd /app && unzip -o komari-theme-mono-1.7.1.zip -d data/theme/Mono'
+```
+
+没装 `unzip` 就用 Python：
+
+```bash
+python3 -c "import zipfile; zipfile.ZipFile('komari-theme-mono-1.7.1.zip').extractall('data/theme/Mono')"
+```
+
+覆盖完 `curl -s https://你的域名/themes/Mono/komari-theme.json | grep version` 应该看到 `1.7.1`。
+
+如果进不了服务器（比如只有网页后台），就在**任意还能打开的后台页面**按 F12，粘贴：
+
+```js
+fetch('/api/admin/theme/delete', {
+  method: 'POST',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ short: 'Mono' }),
+}).then((r) => r.json()).then(console.log);
+```
+
+删掉之后主题管理页就不崩了，再从 Release 重新上传 zip 即可（`default` 主题删不掉，
+站点会自动回退，不会白屏）。
+
+这个页面是按当前主题渲染表单的，**清单里只要有一个 `select` 的 `options` 不是字符串**，
+整页就报 `split is not a function`。1.4.2 的清单里 `options` 写成了 `[{label,value}]` 数组，
+这正是老版本会崩、1.7.x 不会崩的原因。
